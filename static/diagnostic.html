@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Assignment Test - ARCANA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result.success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .result.error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .key-value {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .key {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .value {
+            font-family: 'Courier New', monospace;
+            color: #333;
+        }
+        
+        .copy-btn {
+            background: #28a745;
+            padding: 5px 15px;
+            font-size: 14px;
+        }
+        
+        .copy-btn:hover {
+            background: #218838;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 500;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .redirect-url {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            word-break: break-all;
+        }
+        
+        .redirect-url strong {
+            color: #856404;
+        }
+        
+        .step {
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #0066cc;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 URL Assignment Diagnostic Tool</h1>
+        
+        <!-- Test 1: Direct API Call -->
+        <div class="test-section">
+            <h2>测试 1: 直接调用 /api/assign_url</h2>
+            <p style="color: #666; margin-bottom: 15px;">直接调用 API 端点，查看返回的 JSON 数据</p>
+            
+            <div class="input-group">
+                <label for="participantId1">Participant ID:</label>
+                <input type="text" id="participantId1" placeholder="例如：test_user_001" value="diagnostic_test_user">
+            </div>
+            
+            <button class="btn" onclick="testDirectAPI()">测试 API 调用</button>
+            
+            <div id="result1" class="result"></div>
+        </div>
+        
+        <!-- Test 2: /start Redirect -->
+        <div class="test-section">
+            <h2>测试 2: /start 重定向流程</h2>
+            <p style="color: #666; margin-bottom: 15px;">测试自动分配并重定向到测试页面</p>
+            
+            <div class="input-group">
+                <label for="participantId2">Participant ID:</label>
+                <input type="text" id="participantId2" placeholder="例如：test_user_002" value="redirect_test_user">
+            </div>
+            
+            <button class="btn" onclick="testStartRedirect()">测试 /start 重定向</button>
+            <button class="btn" onclick="simulateStartRedirect()" style="background: #6c757d;">模拟重定向（查看 URL）</button>
+            
+            <div id="result2" class="result"></div>
+        </div>
+        
+        <!-- Test 3: Verify Assignment -->
+        <div class="test-section">
+            <h2>测试 3: 验证分配是否保存到 KV</h2>
+            <p style="color: #666; margin-bottom: 15px;">通过 session_id 查询分配数据</p>
+            
+            <div class="input-group">
+                <label for="sessionId">Session ID (从测试 1 获取):</label>
+                <input type="text" id="sessionId" placeholder="例如：79a594f9254823ea">
+            </div>
+            
+            <button class="btn" onclick="verifyAssignment()">验证分配数据</button>
+            
+            <div id="result3" class="result"></div>
+        </div>
+        
+        <!-- Explanation -->
+        <div class="test-section" style="border-left-color: #28a745;">
+            <h2>📖 使用说明</h2>
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>测试 1</strong>：直接调用 <code>/api/assign_url</code>，查看是否能正常返回 <code>unique_url</code>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>测试 2</strong>：访问 <code>/start</code> 端点，检查是否正确重定向到 <code>/test.html?session_id=xxx</code>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>测试 3</strong>：使用获取的 session_id，验证数据是否正确保存到 KV 存储
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://arcanacogtest.pages.dev';
+        
+        // Test 1: Direct API Call
+        async function testDirectAPI() {
+            const participantId = document.getElementById('participantId1').value.trim();
+            const resultDiv = document.getElementById('result1');
+            
+            if (!participantId) {
+                resultDiv.className = 'result error show';
+                resultDiv.innerHTML = '<h3>❌ 错误</h3><p>请输入 Participant ID</p>';
+                return;
+            }
+            
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>正在调用 API...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/assign_url`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        participant_id: participantId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Auto-fill session_id in Test 3
+                    document.getElementById('sessionId').value = data.unique_url;
+                    
+                    resultDiv.className = 'result success show';
+                    resultDiv.innerHTML = `
+                        <h3>✅ 分配成功！</h3>
+                        <div class="key-value">
+                            <span class="key">unique_url:</span>
+                            <span class="value">${data.unique_url}</span>
+                            <button class="btn copy-btn" onclick="copyToClipboard('${data.unique_url}')">复制</button>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">test_group:</span>
+                            <span class="value">${data.test_group}</span>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">assignment_fingerprint:</span>
+                            <span class="value">${data.assignment_fingerprint}</span>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">assignment_sequence:</span>
+                            <span class="value">${data.assignment_sequence}</span>
+                        </div>
+                        <h3 style="margin-top: 20px;">完整 JSON 响应:</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'result error show';
+                    resultDiv.innerHTML = `
+                        <h3>❌ 分配失败</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error show';
+                resultDiv.innerHTML = `
+                    <h3>❌ 请求失败</h3>
+                    <p>${error.message}</p>
+                    <pre>${error.stack}</pre>
+                `;
+            }
+        }
+        
+        // Test 2: /start Redirect
+        async function testStartRedirect() {
+            const participantId = document.getElementById('participantId2').value.trim();
+            
+            if (!participantId) {
+                alert('请输入 Participant ID');
+                return;
+            }
+            
+            // Actually redirect
+            window.location.href = `${API_BASE}/start?participant_id=${encodeURIComponent(participantId)}`;
+        }
+        
+        // Test 2: Simulate redirect (show URL without actually redirecting)
+        async function simulateStartRedirect() {
+            const participantId = document.getElementById('participantId2').value.trim();
+            const resultDiv = document.getElementById('result2');
+            
+            if (!participantId) {
+                resultDiv.className = 'result error show';
+                resultDiv.innerHTML = '<h3>❌ 错误</h3><p>请输入 Participant ID</p>';
+                return;
+            }
+            
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>模拟重定向流程...</div>';
+            
+            try {
+                // Call assign_url API first
+                const assignResponse = await fetch(`${API_BASE}/api/assign_url`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participant_id: participantId })
+                });
+                
+                const assignData = await assignResponse.json();
+                
+                if (assignData.success) {
+                    const redirectUrl = `${API_BASE}/test.html?session_id=${assignData.unique_url}&participant_id=${encodeURIComponent(participantId)}`;
+                    
+                    resultDiv.className = 'result success show';
+                    resultDiv.innerHTML = `
+                        <h3>✅ 重定向 URL 已生成</h3>
+                        <p>如果使用 <code>/start</code> 端点，应该重定向到：</p>
+                        <div class="redirect-url">
+                            <strong>重定向目标:</strong><br>
+                            <a href="${redirectUrl}" target="_blank" style="color: #0066cc;">${redirectUrl}</a>
+                        </div>
+                        <button class="btn" onclick="window.open('${redirectUrl}', '_blank')" style="margin-top: 15px;">
+                            在新标签页中打开
+                        </button>
+                        <h3 style="margin-top: 20px;">分配数据:</h3>
+                        <pre>${JSON.stringify(assignData, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'result error show';
+                    resultDiv.innerHTML = `
+                        <h3>❌ 分配失败</h3>
+                        <pre>${JSON.stringify(assignData, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error show';
+                resultDiv.innerHTML = `
+                    <h3>❌ 请求失败</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        // Test 3: Verify Assignment
+        async function verifyAssignment() {
+            const sessionId = document.getElementById('sessionId').value.trim();
+            const resultDiv = document.getElementById('result3');
+            
+            if (!sessionId) {
+                resultDiv.className = 'result error show';
+                resultDiv.innerHTML = '<h3>❌ 错误</h3><p>请输入 Session ID</p>';
+                return;
+            }
+            
+            resultDiv.className = 'result show';
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>查询 KV 数据...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/get_assignment?session_id=${sessionId}`);
+                const data = await response.json();
+                
+                if (data.success && data.assignment) {
+                    const assignment = data.assignment;
+                    
+                    resultDiv.className = 'result success show';
+                    resultDiv.innerHTML = `
+                        <h3>✅ 分配数据已找到</h3>
+                        <div class="key-value">
+                            <span class="key">participant_id:</span>
+                            <span class="value">${assignment.participant_id || '(未设置)'}</span>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">test_group_file:</span>
+                            <span class="value">${assignment.test_group_file}</span>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">status:</span>
+                            <span class="value">${assignment.status}</span>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">assigned_at:</span>
+                            <span class="value">${assignment.assigned_at}</span>
+                        </div>
+                        <div class="key-value">
+                            <span class="key">access_count:</span>
+                            <span class="value">${assignment.access_count}</span>
+                        </div>
+                        <h3 style="margin-top: 20px;">完整分配数据:</h3>
+                        <pre>${JSON.stringify(assignment, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.className = 'result error show';
+                    resultDiv.innerHTML = `
+                        <h3>❌ 未找到分配数据</h3>
+                        <p>${data.message || '该 session_id 不存在或已过期'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error show';
+                resultDiv.innerHTML = `
+                    <h3>❌ 请求失败</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        // Helper function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已复制到剪贴板: ' + text);
+            });
+        }
+    </script>
+</body>
+</html>

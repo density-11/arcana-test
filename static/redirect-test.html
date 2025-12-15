@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重定向测试 - ARCANA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #667eea; margin-top: 0; }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover { background: #5568d3; }
+        .result {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🔍 ARCANA 重定向诊断工具</h1>
+    
+    <div class="test-box">
+        <h2>测试 1: 手动触发 /start 重定向</h2>
+        <p>输入 Participant ID，然后点击按钮跳转到 /start 端点</p>
+        <input type="text" id="pid1" placeholder="例如：test_user_001" value="manual_test_user">
+        <button onclick="testManualRedirect()">🚀 跳转到 /start</button>
+        <div id="result1" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>测试 2: API 直接调用（查看返回数据）</h2>
+        <p>直接调用 /api/assign_url 查看返回的数据</p>
+        <input type="text" id="pid2" placeholder="例如：test_user_002" value="api_test_user">
+        <button onclick="testDirectAPI()">📡 调用 API</button>
+        <div id="result2" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>测试 3: 检查当前 URL 参数</h2>
+        <p>显示当前页面的 URL 参数（用于诊断重定向后的 URL）</p>
+        <button onclick="showCurrentParams()">🔎 查看当前 URL</button>
+        <div id="result3" class="result" style="display:none;"></div>
+    </div>
+    
+    <div class="test-box">
+        <h2>测试 4: 模拟完整流程</h2>
+        <p>模拟从 index.html 开始的完整流程（不实际跳转）</p>
+        <input type="text" id="pid4" placeholder="例如：test_user_003" value="simulate_test_user">
+        <button onclick="simulateFullFlow()">🎬 模拟流程</button>
+        <div id="result4" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        const BASE_URL = window.location.origin;
+        
+        // 测试 1: 手动重定向到 /start
+        function testManualRedirect() {
+            const pid = document.getElementById('pid1').value.trim();
+            if (!pid) {
+                alert('请输入 Participant ID');
+                return;
+            }
+            const url = `${BASE_URL}/start?participant_id=${encodeURIComponent(pid)}`;
+            document.getElementById('result1').innerHTML = `即将跳转到:\n${url}`;
+            document.getElementById('result1').style.display = 'block';
+            document.getElementById('result1').className = 'result info';
+            
+            setTimeout(() => {
+                window.location.href = url;
+            }, 1000);
+        }
+        
+        // 测试 2: 直接调用 API
+        async function testDirectAPI() {
+            const pid = document.getElementById('pid2').value.trim();
+            if (!pid) {
+                alert('请输入 Participant ID');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('result2');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = '正在调用 API...';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/api/assign_url`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participant_id: pid })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `✅ 分配成功！\n\n` +
+                        `unique_url: ${data.unique_url}\n` +
+                        `test_group: ${data.test_group}\n` +
+                        `assignment_fingerprint: ${data.assignment_fingerprint}\n\n` +
+                        `完整 JSON:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `❌ 分配失败\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ 请求失败: ${error.message}`;
+            }
+        }
+        
+        // 测试 3: 显示当前 URL 参数
+        function showCurrentParams() {
+            const resultDiv = document.getElementById('result3');
+            const params = new URLSearchParams(window.location.search);
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            
+            let output = `当前 URL: ${window.location.href}\n\n`;
+            
+            if (params.toString()) {
+                output += `URL 参数:\n`;
+                for (const [key, value] of params) {
+                    output += `  ${key} = ${value}\n`;
+                }
+                
+                const sessionId = params.get('session_id');
+                const participantId = params.get('participant_id');
+                
+                if (sessionId) {
+                    output += `\n✅ session_id 存在: ${sessionId}`;
+                } else {
+                    output += `\n❌ 没有 session_id 参数！`;
+                }
+                
+                if (participantId) {
+                    output += `\n✅ participant_id 存在: ${participantId}`;
+                } else {
+                    output += `\n⚠️ 没有 participant_id 参数`;
+                }
+            } else {
+                output += `❌ URL 中没有任何参数`;
+            }
+            
+            resultDiv.innerHTML = output;
+        }
+        
+        // 测试 4: 模拟完整流程
+        async function simulateFullFlow() {
+            const pid = document.getElementById('pid4').value.trim();
+            if (!pid) {
+                alert('请输入 Participant ID');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('result4');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            
+            let output = `[步骤 1] 用户输入 Participant ID: ${pid}\n\n`;
+            resultDiv.innerHTML = output;
+            
+            // Step 1: Verify participant ID
+            output += `[步骤 2] 调用 /api/verify_participant_id...\n`;
+            resultDiv.innerHTML = output;
+            
+            try {
+                const verifyResp = await fetch(`${BASE_URL}/api/verify_participant_id`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participant_id: pid, session_id: null })
+                });
+                const verifyData = await verifyResp.json();
+                
+                output += `  结果: success=${verifyData.success}, has_assigned_url=${verifyData.has_assigned_url}\n\n`;
+                resultDiv.innerHTML = output;
+                
+                // Step 2: Assign URL
+                output += `[步骤 3] 用户点击"开始新测试"，应该重定向到:\n`;
+                output += `  ${BASE_URL}/start?participant_id=${encodeURIComponent(pid)}\n\n`;
+                resultDiv.innerHTML = output;
+                
+                // Step 3: Call assign_url to see what would happen
+                output += `[步骤 4] /start 端点会调用 /api/assign_url...\n`;
+                resultDiv.innerHTML = output;
+                
+                const assignResp = await fetch(`${BASE_URL}/api/assign_url`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participant_id: pid })
+                });
+                const assignData = await assignResp.json();
+                
+                if (assignData.success) {
+                    output += `  分配成功！unique_url: ${assignData.unique_url}\n\n`;
+                    output += `[步骤 5] Worker 会重定向到:\n`;
+                    const redirectUrl = `${BASE_URL}/test.html?session_id=${assignData.unique_url}&participant_id=${encodeURIComponent(pid)}`;
+                    output += `  ${redirectUrl}\n\n`;
+                    output += `[步骤 6] test.html 页面加载后会:\n`;
+                    output += `  - 从 URL 读取 session_id: ${assignData.unique_url}\n`;
+                    output += `  - 从 URL 读取 participant_id: ${pid}\n`;
+                    output += `  - 调用 /api/get_assignment?session_id=${assignData.unique_url}\n`;
+                    output += `  - 获取完整的分配信息\n\n`;
+                    output += `✅ 完整流程模拟成功！\n\n`;
+                    output += `要实际测试，请点击下面的链接:\n`;
+                    output += `👉 ${redirectUrl}`;
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = output;
+                    
+                    // Add a clickable link
+                    const link = document.createElement('a');
+                    link.href = redirectUrl;
+                    link.textContent = '\n\n🔗 点击这里打开测试页面';
+                    link.style.display = 'block';
+                    link.style.marginTop = '15px';
+                    link.style.color = '#0066cc';
+                    link.style.fontWeight = 'bold';
+                    resultDiv.appendChild(link);
+                } else {
+                    output += `❌ 分配失败: ${JSON.stringify(assignData)}\n`;
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = output;
+                }
+            } catch (error) {
+                output += `❌ 错误: ${error.message}\n`;
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = output;
+            }
+        }
+        
+        // 页面加载时自动显示当前 URL 参数
+        window.addEventListener('load', () => {
+            showCurrentParams();
+        });
+    </script>
+</body>
+</html>

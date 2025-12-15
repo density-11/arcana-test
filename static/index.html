@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Informed Consent — Reasoning Task Study (v2.5.1)</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255,255,255,0.96);
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(2,6,23,0.35);
+            color: #0b1220;
+        }
+
+        h1 { font-size: 1.6rem; margin-bottom: 8px; }
+        h2 { font-size: 1.1rem; margin-top: 18px; margin-bottom: 8px; }
+        p { line-height: 1.6; margin-bottom: 12px; }
+        ul { margin-left: 18px; margin-bottom: 12px; }
+
+        .actions { display:flex; gap:12px; margin-top: 18px; justify-content: center; }
+        .btn {
+            padding: 12px 22px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .btn-primary { background: #4f46e5; color: white; }
+        .btn-secondary { background: #eef2ff; color: #111827; border: 1px solid rgba(0,0,0,0.06); }
+
+        .muted { color: #374151; font-size: 0.95rem; }
+        .small { font-size: 0.9rem; }
+
+        .loading { display:none; text-align:center; margin-top:12px; }
+        .spinner { width:28px; height:28px; border-radius:50%; border:3px solid rgba(79,70,229,0.2); border-top:3px solid #4f46e5; animation:spin 1s linear infinite; margin: 8px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* End view when participant declines */
+        .end-view { display:none; text-align:center; padding:30px; }
+        .end-view h2 { margin-bottom:8px; }
+
+        /* Language Switcher - Below Title */
+        .language-switcher {
+            text-align: center;
+            margin: 15px 0 20px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .language-switcher-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        
+        .language-switcher .lang-icon {
+            font-size: 18px;
+            margin-right: 6px;
+        }
+        
+        .language-switcher select {
+            border: 2px solid #4f46e5;
+            background: white;
+            font-size: 15px;
+            font-weight: 600;
+            color: #4f46e5;
+            cursor: pointer;
+            outline: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .language-switcher select:hover {
+            background: #eef2ff;
+            border-color: #6366f1;
+        }
+        
+        .language-switcher select:focus {
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .language-switcher select option {
+            padding: 8px;
+        }
+
+        /* Participant ID Input Page */
+        .id-input-page {
+            display: none;
+        }
+        
+        .id-input-container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .id-input-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #111827;
+        }
+        
+        .id-input-field {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            transition: border-color 0.2s;
+        }
+        
+        .id-input-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .id-hint {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        
+        .progress-info {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .progress-info h3 {
+            margin: 0 0 10px 0;
+            color: #1e40af;
+            font-size: 16px;
+        }
+        
+        .progress-detail {
+            font-size: 14px;
+            color: #1e3a8a;
+            margin: 5px 0;
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 15px 0;
+            color: #991b1b;
+            font-size: 14px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .button-group .btn {
+            flex: 1;
+        }
+        
+        .button-group .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #e5e7eb;
+            color: #9ca3af;
+            border: 2px solid #d1d5db;
+        }
+        
+        .button-group .btn:disabled:hover {
+            background: #e5e7eb;
+            transform: none;
+        }
+
+        @media (max-width:600px){ 
+            .card{ padding:18px; } 
+            .actions{ flex-direction:column; }
+            .button-group { flex-direction: column; }
+            .button-group .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="consentCard">
+        <h1 data-i18n="consent.title">Informed Consent for Participation</h1>
+        <p class="muted small" data-i18n="consent.subtitle">Study: Human Reasoning Task — Human Participant Research</p>
+
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+            <span class="language-switcher-label" data-i18n="languageSwitcher.label">Select Language / 选择语言:</span>
+            <span class="lang-icon">🌐</span>
+            <select id="languageSelect" onchange="switchLanguage(this.value)" aria-label="Language selection">
+                <option value="en" selected>English</option>
+                <option value="zh">中文</option>
+            </select>
+        </div>
+
+        <p data-i18n="consent.intro">Please read the following information carefully before deciding whether to participate. Your participation is voluntary, and you may stop or withdraw at any time without penalty. Note that eligibility for the study payment is described below.</p>
+
+        <h2 data-i18n="consent.purpose.title">Purpose</h2>
+    <p data-i18n="consent.purpose.content">This study aims to collect human responses on a set of short reasoning tasks. The data will be used to analyze human problem-solving behavior and to support research in cognitive science and related fields.</p>
+
+        <h2 data-i18n="consent.procedures.title">Procedures</h2>
+    <p data-i18n="consent.procedures.intro">If you agree to participate, the testing platform will guide you through the following sequence of pages and steps:</p>
+    <ul>
+        <li data-i18n="consent.procedures.steps.intro">Introduction page: An introduction page describes the study and tips for participation.</li>
+        <li data-i18n="consent.procedures.steps.tutorial">Tutorial page: A short interactive tutorial that demonstrates how to complete the tasks. You must read and follow the tutorial carefully to learn the response format and controls.</li>
+        <li data-i18n="consent.procedures.steps.attention">Attention check page: A short verification page to confirm that you understood the instructions in the tutorial. You must complete the attention check correctly to continue.</li>
+        <li data-i18n="consent.procedures.steps.test">Formal test page: If you pass the attention check, you will be assigned the formal test sequence of tasks.</li>
+    </ul>
+    <p data-i18n="consent.procedures.important">Important: You must read the tutorial and complete the attention check correctly to proceed to the formal test. Participants who do not complete the tutorial or who fail the attention check will not proceed to the formal test and will not be eligible for compensation.</p>
+
+        <h2 data-i18n="consent.data.title">Data Collected</h2>
+        <ul>
+            <li data-i18n="consent.data.responses">Task responses (the answers you provide for each task).</li>
+            <li data-i18n="consent.data.timestamps">Timestamps for task start and completion.</li>
+            <li data-i18n="consent.data.metadata">Non-identifying metadata such as browser type and assignment ID. These identifiers are used for assignment management and quality control only and are not direct personal identifiers.</li>
+        </ul>
+
+        <h2 data-i18n="consent.confidentiality.title">Confidentiality</h2>
+    <p data-i18n="consent.confidentiality.content">All data will be treated as confidential. We will not collect direct personal identifiers such as your name or personal contact details. The platform may record technical information (for example, transient IP addresses or server logs) for operational or security purposes; these will not be used to identify you in research outputs and will be handled in accordance with the project's data-management policies. Collected research data will be stored on secure drives and used only for approved research purposes. Access to raw data will be restricted to authorized research personnel. Any publications or publicly shared datasets will contain only aggregated or anonymized results.</p>
+
+        <h2 data-i18n="consent.compensation.title">Compensation</h2>
+    <p data-i18n="consent.compensation.content1">All participants who successfully complete and submit the assigned test session will receive a fixed base payment for their time. In addition to this base payment, participants will earn a small bonus for each task answered correctly. Your total payment will be calculated as the base payment for the completed submission plus the per-item bonuses for correctly answered tasks.</p>
+    <p data-i18n="consent.compensation.content2">The exact base amount and the bonus rate per correct answer will be displayed on the testing platform and in any payment instructions before you begin. To be eligible for payment (including any earned bonuses), you must complete the assigned session and submit your responses according to the study instructions; withdrawing before completion or failing to submit may affect eligibility. Payments will be issued by the method described by the study coordinator and may be subject to verification and routine quality-control checks.</p>
+
+        <h2 data-i18n="consent.risks.title">Risks and Benefits</h2>
+        <p data-i18n="consent.risks.content">There are minimal risks associated with this study. You may experience mild fatigue from performing tasks. There is no direct benefit to you, but your participation contributes to scientific understanding of reasoning.</p>
+
+        <h2 data-i18n="consent.voluntary.title">Voluntary Participation</h2>
+    <p data-i18n="consent.voluntary.content">Your participation is entirely voluntary. You may decline to participate or stop at any time without penalty. Please note that payment eligibility is governed by the completion rules described above.</p>
+
+        <h2 data-i18n="consent.contact.title">Contact</h2>
+    <p data-i18n="consent.contact.content">If you have questions about the study or your compensation, contact the research team at</p> <span class="muted">crq2020_08@mail.ustc.edu.cn</span>.</p>
+
+        <div class="actions" role="group" aria-label="consent actions">
+            <button id="agreeBtn" class="btn btn-primary" onclick="agree()" data-i18n="consent.buttons.agree">Agree</button>
+            <button id="disagreeBtn" class="btn btn-secondary" onclick="disagree()" data-i18n="consent.buttons.disagree">Disagree</button>
+        </div>
+
+        <div class="loading" id="loadingDiv">
+            <div class="spinner"></div>
+            <div class="small muted" data-i18n="consent.loading">Preparing your test session…</div>
+        </div>
+    </div>
+
+    <div class="card end-view" id="endView">
+        <h2 data-i18n="consent.end.title">Thank you for your time</h2>
+        <p class="muted" data-i18n="consent.end.message">You have chosen not to participate. You may close this window or navigate away.</p>
+        <div style="margin-top:18px;"><button class="btn btn-secondary" onclick="closeWindow()" data-i18n="consent.buttons.close">Close</button></div>
+    </div>
+
+    <!-- Participant ID Input Page -->
+    <div class="card id-input-page" id="idInputCard">
+        <h1 data-i18n="participantId.title">Participant Information</h1>
+        <p class="muted small" data-i18n="participantId.subtitle">Please enter your participant ID to continue</p>
+
+        <div class="id-input-container">
+            <label for="participantIdInput" class="id-input-label" data-i18n="participantId.label">Participant ID:</label>
+            <input 
+                type="text" 
+                id="participantIdInput" 
+                class="id-input-field" 
+                placeholder="Enter your ID..."
+                data-i18n-placeholder="participantId.placeholder"
+            />
+            <div class="id-hint" data-i18n="participantId.hint">
+                Please enter the unique participant ID provided to you by the research team.
+            </div>
+
+            <!-- ID Status Indicator -->
+            <div id="idStatusIndicator" style="display: none; margin: 15px 0; padding: 10px; border-radius: 6px; font-size: 14px;"></div>
+
+            <!-- Progress information (shown if saved progress exists) -->
+            <div id="progressInfo" style="display: none;"></div>
+
+            <!-- Error message -->
+            <div id="errorMessage" style="display: none;"></div>
+
+            <!-- Action buttons -->
+            <div class="button-group">
+                <button 
+                    id="startNewBtn" 
+                    class="btn btn-primary" 
+                    onclick="startNewTest()"
+                    disabled
+                    data-i18n="participantId.buttons.startNew"
+                    title="Please enter your participant ID first"
+                >
+                    🆕 Start New Test
+                </button>
+                <button 
+                    id="loadProgressBtn" 
+                    class="btn btn-secondary" 
+                    onclick="loadSavedProgress()"
+                    disabled
+                    data-i18n="participantId.buttons.loadProgress"
+                    title="No saved progress available"
+                >
+                    📂 Load Saved Progress
+                </button>
+            </div>
+
+            <div class="loading" id="idLoadingDiv" style="margin-top: 20px;">
+                <div class="spinner"></div>
+                <div class="small muted" data-i18n="participantId.verifying" style="font-weight: 600; color: #4f46e5; margin-bottom: 8px;">Verifying your ID, please wait...</div>
+                <div class="small muted" data-i18n="participantId.verifyingDetail" style="font-size: 13px; color: #6b7280;">This may take up to 30 seconds. Please do not refresh or click repeatedly.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // Internationalization (i18n) System
+        // ========================================
+
+        // API Configuration
+        // 使用相对路径，通过 Pages Functions 代理到 Worker
+        // 如果直接访问 Worker 失败，Pages Function 会自动代理请求
+        const API_BASE = '';  // 使用相对路径（空字符串）
+
+        const translations = {
+            en: {
+                languageSwitcher: {
+                    label: "Select Language / 选择语言:"
+                },
+                participantId: {
+                    title: "Participant Information",
+                    subtitle: "Please enter your participant ID to continue",
+                    label: "Participant ID:",
+                    placeholder: "Enter your ID...",
+                    hint: "Please enter the unique participant ID provided to you by the research team.",
+                    verifying: "Verifying your ID, please wait...",
+                    verifyingDetail: "This may take up to 60 seconds. Please do not refresh or click repeatedly.",
+                    status: {
+                        verified: "ID Verified"
+                    },
+                    buttons: {
+                        startNew: "🆕 Start New Test",
+                        loadProgress: "📂 Load Saved Progress",
+                        continueTest: "▶️ Continue Test",
+                        enterIdFirst: "Please enter your participant ID first",
+                        noProgress: "No saved progress available for this ID",
+                        startNewTooltip: "Start a new test session",
+                        loadProgressTooltip: "Continue from where you left off",
+                        continueTestTooltip: "Continue with your assigned test",
+                        hasProgressBlock: "You must load your saved progress first. Cannot start new test to prevent data loss."
+                    },
+                    progress: {
+                        found: "Saved Progress Found!",
+                        session: "Session ID:",
+                        testGroup: "Test Group:",
+                        savedAt: "Saved At:",
+                        startedAt: "Started At:",
+                        completed: "Problems Completed:",
+                        canLoad: "You can continue from where you left off, or start a new test.",
+                        mustLoad: "You have unfinished progress. Please load your saved progress to continue. Starting a new test is disabled to prevent data loss."
+                    },
+                    urlAssignment: {
+                        found: "Previous URL Assignment Found",
+                        session: "Session ID:",
+                        testGroup: "Test Group:",
+                        assignedAt: "Assigned At:",
+                        willReuse: "Your previously assigned test URL will be reused. Click 'Continue Test' to proceed."
+                    },
+                    errors: {
+                        emptyId: "Please enter your participant ID.",
+                        serverError: "Server error. Please try again later.",
+                        alreadySubmitted: "This progress has already been submitted.",
+                        noProgress: "No saved progress found. Starting new test...",
+                        loadFailed: "Failed to load progress. Please try again."
+                    }
+                },
+                consent: {
+                    title: "Informed Consent for Participation",
+                    subtitle: "Study: Human Reasoning Task — Human Participant Research",
+                    intro: "Please read the following information carefully before deciding whether to participate. Your participation is voluntary, and you may stop or withdraw at any time without penalty. Note that eligibility for the study payment is described below.",
+                    purpose: {
+                        title: "Purpose",
+                        content: "This study aims to collect human responses on a set of short reasoning tasks. The data will be used to analyze human problem-solving behavior and to support research in cognitive science and related fields."
+                    },
+                    procedures: {
+                        title: "Procedures",
+                        intro: "If you agree to participate, the testing platform will guide you through the following sequence of pages and steps:",
+                        steps: {
+                            intro: "<strong>Introduction page</strong>: An introduction page describes the study and tips for participation.",
+                            tutorial: "<strong>Tutorial page</strong>: A short interactive tutorial that demonstrates how to complete the tasks. You <strong>must</strong> read and follow the tutorial carefully to learn the response format and controls.",
+                            attention: "<strong>Attention check page</strong>: A short verification page to confirm that you understood the instructions in the tutorial. You <strong>must</strong> complete the attention check correctly to continue.",
+                            test: "<strong>Formal test page</strong>: If you pass the attention check, you will be assigned the formal test sequence of tasks."
+                        },
+                        important: "<strong>Important:</strong> You <strong>must</strong> read the tutorial and complete the attention check correctly to proceed to the formal test. Participants who do not complete the tutorial or who fail the attention check will not proceed to the formal test and will not be eligible for compensation."
+                    },
+                    data: {
+                        title: "Data Collected",
+                        responses: "Task responses (the answers you provide for each task).",
+                        timestamps: "Timestamps for task start and completion.",
+                        metadata: "Non-identifying metadata such as browser type and assignment ID. These identifiers are used for assignment management and quality control only and are not direct personal identifiers."
+                    },
+                    confidentiality: {
+                        title: "Confidentiality",
+                        content: "All data will be treated as confidential. We will only collect necessary data for data management. These will not be used to direct personal identification in research outputs and will be handled in accordance with the project's data-management policies. Collected research data will be stored on secure drives and used only for approved research purposes. Access to raw data will be restricted to authorized research personnel. Any publications or publicly shared datasets will contain only aggregated or anonymized results."
+                    },
+                    compensation: {
+                        title: "Compensation",
+                        content1: "All participants who successfully complete and submit the assigned test session will receive a fixed base payment for their time. In addition to this base payment, participants will earn a small bonus for each task answered correctly. Your total payment will be calculated as the base payment for the completed submission plus the per-item bonuses for correctly answered tasks.",
+                        content2: "The exact base amount and the bonus rate per correct answer will be displayed on the testing platform and in any payment instructions before you begin. To be eligible for payment (including any earned bonuses), you must complete the assigned session and submit your responses according to the study instructions; withdrawing before completion or failing to submit may affect eligibility. Payments will be issued by the method described by the study coordinator and may be subject to verification and routine quality-control checks."
+                    },
+                    risks: {
+                        title: "Risks and Benefits",
+                        content: "There are minimal risks associated with this study. You may experience mild fatigue from performing tasks. There is no direct benefit to you, but your participation contributes to scientific understanding of reasoning."
+                    },
+                    voluntary: {
+                        title: "Voluntary Participation",
+                        content: "Your participation is entirely voluntary. You may decline to participate or stop at any time but without compensation. Please note that payment eligibility is governed by the completion rules described above."
+                    },
+                    contact: {
+                        title: "Contact",
+                        content: "If you have questions about the study or your compensation, contact the research team at"
+                    },
+                    buttons: {
+                        agree: "Agree and Participate in the Study",
+                        disagree: "Disagree",
+                        close: "Close"
+                    },
+                    loading: "Preparing your test session…",
+                    end: {
+                        title: "Thank you for your time",
+                        message: "You have chosen not to participate. You may close this window or navigate away."
+                    }
+                }
+            },
+            zh: {
+                languageSwitcher: {
+                    label: "选择语言 / Select Language:"
+                },
+                participantId: {
+                    title: "参与者信息",
+                    subtitle: "请输入您的参与者ID以继续",
+                    label: "参与者ID：",
+                    placeholder: "输入您的ID...",
+                    hint: "请输入研究团队提供给您的唯一参与者ID。",
+                    verifying: "正在验证您的ID，请稍候...",
+                    verifyingDetail: "验证过程可能需要最多60秒，请勿刷新页面或重复点击。",
+                    status: {
+                        verified: "ID已验证"
+                    },
+                    buttons: {
+                        startNew: "🆕 开始新测试",
+                        loadProgress: "📂 加载已保存进度",
+                        continueTest: "▶️ 继续测试",
+                        enterIdFirst: "请先输入您的参与者ID",
+                        noProgress: "此ID没有已保存的进度",
+                        startNewTooltip: "开始新的测试会话",
+                        loadProgressTooltip: "从上次中断的地方继续",
+                        continueTestTooltip: "使用您已分配的测试继续",
+                        hasProgressBlock: "您必须先加载已保存的进度。为防止数据丢失，无法开始新测试。"
+                    },
+                    progress: {
+                        found: "发现已保存进度！",
+                        session: "会话ID：",
+                        testGroup: "测试组：",
+                        savedAt: "保存时间：",
+                        startedAt: "开始时间：",
+                        completed: "已完成题目数：",
+                        canLoad: "您可以从上次中断的地方继续，或开始新测试。",
+                        mustLoad: "⚠️ 您有未完成的测试进度。请加载已保存的进度以继续。为防止数据丢失，开始新测试的功能已被禁用。"
+                    },
+                    urlAssignment: {
+                        found: "发现先前的URL分配",
+                        session: "会话ID：",
+                        testGroup: "测试组：",
+                        assignedAt: "分配时间：",
+                        willReuse: "将重用您之前分配的测试URL。点击「继续测试」以继续。"
+                    },
+                    errors: {
+                        emptyId: "请输入您的参与者ID。",
+                        serverError: "服务器错误，请稍后再试。",
+                        alreadySubmitted: "该进度已经提交，无法再加载。",
+                        noProgress: "未找到保存的进度，开始新测试...",
+                        loadFailed: "加载进度失败，请重试。"
+                    }
+                },
+                consent: {
+                    title: "知情同意书",
+                    subtitle: "研究：人类推理任务 — 人类参与者研究",
+                    intro: "在决定是否参与之前，请仔细阅读以下信息。参与完全自愿，您可随时停止或退出，不会受到处罚。研究报酬的资格说明见下文。",
+                    purpose: {
+                        title: "研究目的",
+                        content: "本研究旨在收集参与者对一系列简短推理任务的回答。所得数据将用于分析人类的问题解决行为，并支持认知科学及相关领域的研究。"
+                    },
+                    procedures: {
+                        title: "研究流程",
+                        intro: "若您同意参与，测试平台将按以下顺序引导您完成各页面和步骤：",
+                        steps: {
+                            intro: "<strong>介绍页面</strong>：说明研究目的与参与提示。",
+                            tutorial: "<strong>教程页面</strong>：通过简短的互动示例演示如何完成任务。请<strong>务必</strong>仔细阅读并按照教程学习响应格式与操作方法。",
+                            attention: "<strong>注意力检查页面</strong>：用于核实您已理解教程中的说明。您<strong>必须</strong>正确通过注意力检查才能继续。",
+                            test: "<strong>正式测试页面</strong>：通过注意力检查后，系统将分配正式的测试任务序列。"
+                        },
+                        important: "<strong>重要提示：</strong>您<strong>必须</strong>阅读教程并正确完成注意力检查才能进入正式测试。未完成教程或未通过注意力检查的参与者将无法进入正式测试，也不具备获得报酬的资格。"
+                    },
+                    data: {
+                        title: "收集的数据",
+                        responses: "任务回答（您对每项任务的提交）。",
+                        timestamps: "任务开始与完成的时间戳。",
+                        metadata: "用于分配管理的其他必要信息，不会用作直接个人识别。"
+                    },
+                    confidentiality: {
+                        title: "保密与数据存储",
+                        content: "我们将对所有数据予以保密，仅收集必要的信息用于数据管理。这些信息将按照项目的数据管理政策妥善处理。收集的研究数据将存储在安全设备上，仅用于经批准的研究用途，原始数据的访问权限仅限授权研究人员。公开发布或共享的数据集将仅包含汇总或匿名化结果。"
+                    },
+                    compensation: {
+                        title: "报酬说明",
+                        content1: "成功完成并提交指定测试环节的参与者将获得固定的基础报酬作为参与补偿。此外，每答对一题将获得少量奖金。您的总报酬由基础报酬与每题奖金之和构成。",
+                        content2: "具体的基础金额与每题奖金率将在测试平台及支付说明中显示，且将在您开始前告知。为获得支付（含奖金）资格，您必须按研究说明完成并提交指定环节；提前退出或未提交可能会影响支付资格。支付方式与时间将由研究协调员说明，支付前可能需进行验证与常规质量检查。"
+                    },
+                    risks: {
+                        title: "风险与益处",
+                        content: "本研究风险较低。参与过程可能会造成轻微疲劳，但一般不会带来直接个人益处；您的参与有助于推进对推理过程的科研理解。"
+                    },
+                    voluntary: {
+                        title: "自愿参与",
+                        content: "参与完全自愿，您可随时选择不参与或中途退出，但不会得到报酬。请注意，报酬资格以上述完成规则为准。"
+                    },
+                    contact: {
+                        title: "联系方式",
+                        content: "如对本研究或报酬有疑问，请联系研究团队："
+                    },
+                    buttons: {
+                        agree: "同意并参与研究",
+                        disagree: "不同意",
+                        close: "关闭"
+                    },
+                    loading: "正在准备您的测试环节…",
+                    end: {
+                        title: "感谢您的参与",
+                        message: "您已选择不参与。您可以关闭此窗口或离开本页面。"
+                    }
+                }
+            }
+        };
+        
+        let currentLanguage = 'en'; // Default to English
+        
+        function switchLanguage(lang) {
+            if (!translations[lang]) {
+                console.warn(`Language ${lang} not found, defaulting to English`);
+                lang = 'en';
+            }
+            
+            currentLanguage = lang;
+            localStorage.setItem('preferredLanguage', lang);
+            
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = getTranslation(key, lang);
+                if (translation) {
+                    element.innerHTML = translation;
+                }
+            });
+            
+            console.log(`Language switched to: ${lang}`);
+        }
+        
+        function getTranslation(keyPath, lang = currentLanguage) {
+            const keys = keyPath.split('.');
+            let value = translations[lang];
+            
+            for (const key of keys) {
+                if (value && typeof value === 'object') {
+                    value = value[key];
+                } else {
+                    return null;
+                }
+            }
+            
+            return value || translations.en[keyPath];
+        }
+        
+        function initializeLanguage() {
+            const savedLang = localStorage.getItem('preferredLanguage');
+            if (savedLang && translations[savedLang]) {
+                currentLanguage = savedLang;
+                const languageSelect = document.getElementById('languageSelect');
+                if (languageSelect) {
+                    languageSelect.value = savedLang;
+                }
+                switchLanguage(savedLang);
+            } else {
+                // Default to English if no saved preference
+                switchLanguage('en');
+            }
+        }
+        
+        // Initialize language on page load
+        window.addEventListener('DOMContentLoaded', initializeLanguage);
+        
+        // ========================================
+        // End of i18n System
+        // ========================================
+        
+        // Global variables for participant management
+        let participantId = '';
+        let hasSavedProgress = false;
+        let savedProgressData = null;
+        let autoVerifyDisabled = false; // Flag to disable auto-verification after user starts test
+
+        function agree(){
+            // Show ID input page instead of directly redirecting
+            document.getElementById('consentCard').style.display = 'none';
+            document.getElementById('idInputCard').style.display = 'block';
+            
+            // Focus on the input field
+            setTimeout(() => {
+                document.getElementById('participantIdInput').focus();
+            }, 300);
+        }
+        
+        // Verify participant ID when input changes
+        document.addEventListener('DOMContentLoaded', function() {
+            // 🆕 v2.5.15: 检查 URL 参数中的错误信息
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorType = urlParams.get('error');
+            const errorParticipantId = urlParams.get('participant_id');
+            
+            if (errorType) {
+                console.error(`⚠️ [index.html] Error from URL:`, errorType);
+                console.error(`⚠️ [index.html] Participant ID:`, errorParticipantId);
+                
+                // 🆕 v2.5.15: 如果是 assignment_in_progress，自动重试
+                if (errorType === 'assignment_in_progress' && errorParticipantId) {
+                    console.log(`⏳ [index.html] Assignment in progress, retrying in 2 seconds...`);
+                    
+                    // 2 秒后自动重试
+                    setTimeout(() => {
+                        window.location.href = `/start?participant_id=${encodeURIComponent(errorParticipantId)}`;
+                    }, 2000);
+                    
+                    // 显示等待信息
+                    document.getElementById('consentCard').style.display = 'none';
+                    const loadingCard = document.createElement('div');
+                    loadingCard.className = 'card';
+                    loadingCard.innerHTML = `
+                        <h1>⏳ Please Wait</h1>
+                        <p>Your test is being prepared. This will only take a moment...</p>
+                        <div class="loading" style="display: block;">
+                            <div class="spinner"></div>
+                            <div class="small muted">Retrying assignment...</div>
+                        </div>
+                    `;
+                    document.body.appendChild(loadingCard);
+                    return;
+                }
+                
+                // 自动跳转到 ID 输入页面
+                document.getElementById('consentCard').style.display = 'none';
+                document.getElementById('idInputCard').style.display = 'block';
+                
+                // 如果有 participant_id，自动填充
+                if (errorParticipantId) {
+                    const idInput = document.getElementById('participantIdInput');
+                    if (idInput) {
+                        idInput.value = decodeURIComponent(errorParticipantId);
+                        // 自动触发验证
+                        setTimeout(() => {
+                            verifyParticipantId(errorParticipantId);
+                        }, 500);
+                    }
+                }
+                
+                // 显示错误信息
+                let errorMsg = 'Assignment error. Please try again.';
+                if (errorType === 'parse_error') {
+                    errorMsg = '⚠️ Server response error. The system is retrying automatically...';
+                } else if (errorType === 'timeout_error') {
+                    errorMsg = '⏱️ Request timeout. Please check your network connection.';
+                } else if (errorType === 'no_groups_available') {
+                    errorMsg = '❌ No test groups available. Please contact the administrator.';
+                }
+                
+                showError(errorMsg);
+                
+                // 清除 URL 参数（避免刷新时重复显示错误）
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            const idInput = document.getElementById('participantIdInput');
+            if (idInput) {
+                let verifyTimeout;
+                idInput.addEventListener('input', function() {
+                    // Don't auto-verify if user has already started the test
+                    if (autoVerifyDisabled) {
+                        return;
+                    }
+                    
+                    // User is typing - lock buttons immediately
+                    const startNewBtn = document.getElementById('startNewBtn');
+                    const loadProgressBtn = document.getElementById('loadProgressBtn');
+                    if (startNewBtn) {
+                        startNewBtn.disabled = true;
+                        startNewBtn.title = getTranslation('participantId.buttons.enterIdFirst') || 'Verifying ID...';
+                    }
+                    if (loadProgressBtn) {
+                        loadProgressBtn.disabled = true;
+                        loadProgressBtn.title = getTranslation('participantId.buttons.noProgress') || 'Verifying ID...';
+                    }
+                    
+                    // Hide previous status/error messages while typing
+                    const progressInfo = document.getElementById('progressInfo');
+                    const errorMessage = document.getElementById('errorMessage');
+                    const statusIndicator = document.getElementById('idStatusIndicator');
+                    if (progressInfo) progressInfo.style.display = 'none';
+                    if (errorMessage) errorMessage.style.display = 'none';
+                    if (statusIndicator) statusIndicator.style.display = 'none';
+                    
+                    clearTimeout(verifyTimeout);
+                    verifyTimeout = setTimeout(() => {
+                        if (idInput.value.trim()) {
+                            verifyParticipantId(idInput.value.trim());
+                        } else {
+                            // Reset UI if input is empty
+                            resetIdInputUI();
+                        }
+                    }, 1000); // Debounce for 1000ms
+                });
+                
+                // Also verify on Enter key
+                idInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (idInput.value.trim()) {
+                            verifyParticipantId(idInput.value.trim());
+                        }
+                    }
+                });
+            }
+        });
+        
+        function resetIdInputUI() {
+            document.getElementById('progressInfo').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Disable both buttons when no ID is entered
+            const startNewBtn = document.getElementById('startNewBtn');
+            const loadProgressBtn = document.getElementById('loadProgressBtn');
+            
+            startNewBtn.disabled = true;
+            startNewBtn.title = getTranslation('participantId.buttons.enterIdFirst') || 'Please enter your participant ID first';
+            
+            loadProgressBtn.disabled = true;
+            loadProgressBtn.title = getTranslation('participantId.buttons.noProgress') || 'No saved progress available';
+            
+            hasSavedProgress = false;
+            savedProgressData = null;
+        }
+        
+        async function verifyParticipantId(id) {
+            participantId = id;
+            const loadingDiv = document.getElementById('idLoadingDiv');
+            const progressInfo = document.getElementById('progressInfo');
+            const errorMessage = document.getElementById('errorMessage');
+            const loadProgressBtn = document.getElementById('loadProgressBtn');
+            const startNewBtn = document.getElementById('startNewBtn');
+            const statusIndicator = document.getElementById('idStatusIndicator');
+            const idInput = document.getElementById('participantIdInput');
+            
+            // Show loading and disable inputs to prevent duplicate requests
+            loadingDiv.style.display = 'block';
+            progressInfo.style.display = 'none';
+            errorMessage.style.display = 'none';
+            statusIndicator.style.display = 'none';
+            
+            // Disable input and buttons during verification
+            if (idInput) idInput.disabled = true;
+            startNewBtn.disabled = true;
+            loadProgressBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`/api/verify_participant_id`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        participant_id: id,
+                        session_id: getSessionIdFromURL()
+                    })
+                });
+                
+                const data = await response.json();
+                loadingDiv.style.display = 'none';
+                
+                // Re-enable input after verification completes
+                if (idInput) idInput.disabled = false;
+                
+                if (data.success) {
+                    hasSavedProgress = data.has_saved_progress;
+                    savedProgressData = data.saved_data;
+                    const hasAssignedUrl = data.has_assigned_url;
+                    const assignedUrlData = data.assigned_url;
+                    
+                    // Show ID verified status
+                    statusIndicator.innerHTML = `✅ <strong>${getTranslation('participantId.status.verified') || 'ID Verified'}</strong>`;
+                    statusIndicator.style.display = 'block';
+                    statusIndicator.style.background = '#d1fae5';
+                    statusIndicator.style.border = '2px solid #10b981';
+                    statusIndicator.style.color = '#065f46';
+                    
+                    if (hasSavedProgress && savedProgressData) {
+                        // Has saved progress - ONLY allow loading, disable new test
+                        
+                        // 从进度数据中提取开始时间（从 timing 对象中）
+                        const testStartTime = savedProgressData.timing?.testStartTime;
+                        
+                        // Show progress information
+                        const progressHtml = `
+                            <h3>✅ ${getTranslation('participantId.progress.found')}</h3>
+                            <div class="progress-detail">
+                                <strong>${getTranslation('participantId.progress.session')}</strong> ${savedProgressData.session_id || 'N/A'}
+                            </div>
+                            <div class="progress-detail">
+                                <strong>${getTranslation('participantId.progress.testGroup')}</strong> ${savedProgressData.test_group || 'N/A'}
+                            </div>
+                            <div class="progress-detail">
+                                <strong>${getTranslation('participantId.progress.startedAt')}</strong> ${formatDateTime(testStartTime)}
+                            </div>
+                            <p style="margin-top: 10px; color: #1e40af; font-weight: 500;">
+                                ⚠️ ${getTranslation('participantId.progress.mustLoad')}
+                            </p>
+                        `;
+                        progressInfo.innerHTML = progressHtml;
+                        progressInfo.className = 'progress-info';
+                        progressInfo.style.display = 'block';
+                        
+                        // Enable load progress button
+                        loadProgressBtn.disabled = false;
+                        loadProgressBtn.title = getTranslation('participantId.buttons.loadProgressTooltip') || 'Continue from where you left off';
+                        
+                        // DISABLE start new test button (prevent data conflict)
+                        startNewBtn.disabled = true;
+                        startNewBtn.title = getTranslation('participantId.buttons.hasProgressBlock') || 'You must load your saved progress first. Cannot start new test.';
+                        
+                    } else if (hasAssignedUrl && assignedUrlData) {
+                        // Has assigned URL but no saved progress - reuse the URL
+                        
+                        // Show URL assignment information
+                        const assignmentHtml = `
+                            <h3>🔗 ${getTranslation('participantId.urlAssignment.found')}</h3>
+                            <div class="progress-detail">
+                                <strong>${getTranslation('participantId.urlAssignment.session')}</strong> ${assignedUrlData.session_id || 'N/A'}
+                            </div>
+                            <div class="progress-detail">
+                                <strong>${getTranslation('participantId.urlAssignment.testGroup')}</strong> ${assignedUrlData.test_group_file || assignedUrlData.test_group || 'N/A'}
+                            </div>
+                            <div class="progress-detail">
+                                <strong>${getTranslation('participantId.urlAssignment.assignedAt')}</strong> ${formatDateTime(assignedUrlData.assigned_at)}
+                            </div>
+                            <p style="margin-top: 10px; color: #1e40af; font-weight: 500;">
+                                ℹ️ ${getTranslation('participantId.urlAssignment.willReuse')}
+                            </p>
+                        `;
+                        progressInfo.innerHTML = assignmentHtml;
+                        progressInfo.className = 'progress-info';
+                        progressInfo.style.display = 'block';
+                        
+                        // Enable start button (which will reuse the URL)
+                        startNewBtn.disabled = false;
+                        startNewBtn.innerHTML = getTranslation('participantId.buttons.continueTest') || '▶️ Continue Test';
+                        startNewBtn.title = getTranslation('participantId.buttons.continueTestTooltip') || 'Continue with your assigned test';
+                        
+                        // Disable load progress button (no saved progress)
+                        loadProgressBtn.disabled = true;
+                        loadProgressBtn.title = getTranslation('participantId.buttons.noProgress') || 'No saved progress available';
+                        
+                        // Store assigned session_id for reuse
+                        window.assignedSessionId = assignedUrlData.session_id;
+                        
+                    } else {
+                        // No saved progress and no assigned URL - completely new user
+                        progressInfo.style.display = 'none';
+                        
+                        // Enable start new test button
+                        startNewBtn.disabled = false;
+                        startNewBtn.innerHTML = getTranslation('participantId.buttons.startNew') || '🚀 Start New Test';
+                        startNewBtn.title = getTranslation('participantId.buttons.startNewTooltip') || 'Start a new test session';
+                        
+                        // Disable load progress button
+                        loadProgressBtn.disabled = true;
+                        loadProgressBtn.title = getTranslation('participantId.buttons.noProgress') || 'No saved progress available for this ID';
+                        
+                        // Clear any stored session_id
+                        window.assignedSessionId = null;
+                    }
+                } else {
+                    // Show error
+                    showError(data.message || getTranslation('participantId.errors.serverError'));
+                }
+            } catch (error) {
+                console.error('Error verifying participant ID:', error);
+                loadingDiv.style.display = 'none';
+                // Re-enable input on error
+                if (idInput) idInput.disabled = false;
+                showError(getTranslation('participantId.errors.serverError'));
+            }
+        }
+        
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.className = 'error-message';
+            errorMessage.style.display = 'block';
+        }
+        
+        function formatDateTime(isoString) {
+            if (!isoString) return 'N/A';
+            const date = new Date(isoString);
+            return date.toLocaleString();
+        }
+        
+        function getSessionIdFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('session_id') || params.get('session') || params.get('sessionId') || params.get('id') || '';
+        }
+        
+        // 🔄 v2.5.18: 恢复原有的 API 调用逻辑，先获取分配再跳转
+        let isSubmitting = false;
+        
+        async function startNewTest() {
+            console.log('🚀 [startNewTest] Function called');
+            
+            // 防止重复提交
+            if (isSubmitting) {
+                console.log('⏳ [startNewTest] Already submitting, ignoring duplicate request');
+                return;
+            }
+            
+            const idInput = document.getElementById('participantIdInput');
+            participantId = idInput.value.trim();
+            
+            console.log('📝 [startNewTest] Participant ID:', participantId);
+            
+            if (!participantId) {
+                showError(getTranslation('participantId.errors.emptyId'));
+                isSubmitting = false;  // 重置标志
+                return;
+            }
+            
+            // 🆕 v2.5.20: 检查是否已有分配的 session_id（继续测试模式）
+            if (window.assignedSessionId) {
+                console.log('🔄 [startNewTest] Reusing existing session_id:', window.assignedSessionId);
+                
+                // 直接跳转到已分配的测试URL，不调用 API
+                const testUrl = `/app?session_id=${encodeURIComponent(window.assignedSessionId)}&participant_id=${encodeURIComponent(participantId)}`;
+                console.log('🔀 [startNewTest] Redirecting to existing assignment:', testUrl);
+                
+                // 短暂延迟后跳转
+                setTimeout(() => {
+                    window.location.href = testUrl;
+                }, 300);
+                
+                return;
+            }
+            
+            // 设置提交标志，防止重复点击
+            isSubmitting = true;
+            
+            // Disable auto-verification to prevent duplicate requests
+            autoVerifyDisabled = true;
+            
+            // Save participant ID to localStorage
+            localStorage.setItem('participantId', participantId);
+            localStorage.removeItem('savedProgress'); // Clear any old progress
+            
+            // Show loading
+            const loadingDiv = document.getElementById('idLoadingDiv');
+            loadingDiv.style.display = 'block';
+            
+            // Disable buttons during assignment
+            const startNewBtn = document.getElementById('startNewBtn');
+            const loadProgressBtn = document.getElementById('loadProgressBtn');
+            if (startNewBtn) startNewBtn.disabled = true;
+            if (loadProgressBtn) loadProgressBtn.disabled = true;
+            
+            try {
+                // 🔄 v2.5.18: 先调用 API 获取分配，而不是直接跳转
+                console.log('📞 [startNewTest] Calling /api/assign_url to get assignment...');
+                
+                const response = await fetch('/api/assign_url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        participant_id: participantId
+                    })
+                });
+                
+                console.log('📡 [startNewTest] API response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ [startNewTest] API response data:', data);
+                
+                // 🔄 v2.5.18: API 返回的是 unique_url，不是 session_id
+                const sessionId = data.unique_url || data.session_id;
+                const testGroup = data.test_group || 'unknown';
+                
+                if (data.success && sessionId) {
+                    // 🔧 v2.5.18: 添加 assigned_group 参数，避免进度中保存 "unknown"
+                    const testUrl = `/app?session_id=${encodeURIComponent(sessionId)}&participant_id=${encodeURIComponent(participantId)}&assigned_group=${encodeURIComponent(testGroup)}`;
+                    console.log('🔀 [startNewTest] Assignment successful, redirecting to:', testUrl);
+                    console.log('📦 [startNewTest] Test group:', testGroup);
+                    
+                    // 短暂延迟后跳转
+                    setTimeout(() => {
+                        window.location.href = testUrl;
+                    }, 500);
+                } else {
+                    // API 返回错误
+                    console.error('❌ [startNewTest] Assignment failed:', data.message || data.error);
+                    loadingDiv.style.display = 'none';
+                    showError(data.message || data.error || 'Failed to assign test. Please try again.');
+                    isSubmitting = false;  // 重置标志
+                    autoVerifyDisabled = false;  // 重新启用自动检测
+                    
+                    // 重新启用按钮
+                    if (startNewBtn) startNewBtn.disabled = false;
+                    if (loadProgressBtn && hasSavedProgress) loadProgressBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('❌ [startNewTest] Error during assignment:', error);
+                loadingDiv.style.display = 'none';
+                showError('Network error. Please check your connection and try again.');
+                isSubmitting = false;  // 重置标志
+                autoVerifyDisabled = false;  // 重新启用自动检测
+                
+                // 重新启用按钮
+                if (startNewBtn) startNewBtn.disabled = false;
+                if (loadProgressBtn && hasSavedProgress) loadProgressBtn.disabled = false;
+            }
+        }
+        
+        async function loadSavedProgress() {
+            const idInput = document.getElementById('participantIdInput');
+            participantId = idInput.value.trim();
+            
+            if (!participantId) {
+                showError(getTranslation('participantId.errors.emptyId'));
+                return;
+            }
+            
+            // Disable auto-verification to prevent duplicate requests
+            autoVerifyDisabled = true;
+            
+            const loadingDiv = document.getElementById('idLoadingDiv');
+            loadingDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch(`/api/load_progress`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        participant_id: participantId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.progress_data) {
+                    console.log('✅ Progress data loaded from server');
+                    
+                    // Extract session_id and test_group from progress data
+                    const sessionId = data.progress_data.session_id;
+                    const testGroup = data.progress_data.test_group;
+                    
+                    // Build redirect URL with all necessary parameters
+                    // Use /app to access test.html (避开 Pages 对 /test 的特殊处理)
+                    let redirectUrl = `/app?assigned_group=${encodeURIComponent(testGroup)}`;
+                    redirectUrl += `&session_id=${encodeURIComponent(sessionId)}`;
+                    redirectUrl += `&participant_id=${encodeURIComponent(participantId)}`;
+                    redirectUrl += `&load_progress=true`;
+                    
+                    console.log('Redirecting to:', redirectUrl);
+                    
+                    // Redirect to test page with load_progress flag
+                    window.location.href = redirectUrl;
+                } else {
+                    loadingDiv.style.display = 'none';
+                    autoVerifyDisabled = false;  // 重新启用自动检测
+                    showError(data.message || getTranslation('participantId.errors.loadFailed'));
+                }
+            } catch (error) {
+                console.error('Error loading progress:', error);
+                loadingDiv.style.display = 'none';
+                autoVerifyDisabled = false;  // 重新启用自动检测
+                showError(getTranslation('participantId.errors.serverError'));
+            }
+        }
+
+        function disagree(){
+            // Redirect to a dedicated end/thank-you page instead of attempting to close the window.
+            // Use a relative path to avoid server routing rewriting absolute paths back to the introduction.
+            window.location.href = 'consent_end.html';
+        }
+
+        function showEndView(){
+            const card = document.getElementById('consentCard');
+            const end = document.getElementById('endView');
+            if(card) card.style.display = 'none';
+            if(end) end.style.display = 'block';
+        }
+
+        function closeWindow(){
+            try{ window.open('', '_self'); window.close(); }catch(e){ /* ignore */ }
+        }
+    </script>
+</body>
+</html>

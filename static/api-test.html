@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        #result {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 ARCANA API Test Page</h1>
+    <p>Use this page to test if the Pages Functions API is working correctly.</p>
+    
+    <div>
+        <h2>Test Endpoints:</h2>
+        <h3>基础 API</h3>
+        <button onclick="testAPI('/api/version')">Test /api/version</button>
+        <button onclick="testAPI('/api/health')">Test /api/health</button>
+        <button onclick="testAPI('/api/test-data')">Test /api/test-data</button>
+        
+        <h3>参与者管理</h3>
+        <button onclick="testVerifyParticipant()">Test /api/verify_participant_id</button>
+        <button onclick="testCheckProgress()">Test /api/check_saved_progress</button>
+        
+        <h3>进度管理</h3>
+        <button onclick="testSaveProgress()">Test /api/save_progress</button>
+        <button onclick="testLoadProgress()">Test /api/load_progress</button>
+        
+        <h3>结果提交</h3>
+        <button onclick="testSaveResults()">Test /api/save_results</button>
+        
+        <h3>数据加载</h3>
+        <button onclick="testAPI('/api/list_json_files')">Test /api/list_json_files</button>
+        <button onclick="testAPI('/api/get_test_groups')">Test /api/get_test_groups</button>
+        <button onclick="testLoadRemoteJson()">Test /api/load_remote_json</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        async function testAPI(endpoint) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `Testing ${endpoint}...`;
+            resultDiv.className = '';
+
+            try {
+                const startTime = Date.now();
+                const response = await fetch(endpoint, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                const duration = Date.now() - startTime;
+                
+                const contentType = response.headers.get('content-type');
+                let data;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    data = await response.text();
+                }
+
+                const result = {
+                    endpoint,
+                    status: response.status,
+                    statusText: response.statusText,
+                    contentType,
+                    duration: `${duration}ms`,
+                    data
+                };
+
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}\n\nFull error:\n${error.stack}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        async function testVerifyParticipant() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing /api/verify_participant_id...';
+            
+            try {
+                const response = await fetch('/api/verify_participant_id', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        participant_id: 'test_user_123',
+                        session_id: 'test_session'
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        async function testCheckProgress() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing /api/check_saved_progress...';
+            
+            try {
+                const response = await fetch('/api/check_saved_progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        participant_id: 'test_user_123'
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        async function testSaveProgress() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing /api/save_progress...';
+            
+            try {
+                const response = await fetch('/api/save_progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        participant_id: 'test_user_123',
+                        session_id: 'test_session_456',
+                        test_group: 'test_group_A',
+                        problems_data: [{ problem_id: 1, answer: 'test' }],
+                        current_problem_index: 1
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        async function testLoadProgress() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing /api/load_progress...';
+            
+            try {
+                const response = await fetch('/api/load_progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        participant_id: 'test_user_123'
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        async function testSaveResults() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing /api/save_results...';
+            
+            try {
+                const response = await fetch('/api/save_results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        participant_id: 'test_user_123',
+                        session_id: 'test_session_456',
+                        results: [{ problem_id: 1, answer: 'test', correct: true }]
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        async function testLoadRemoteJson() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = 'Testing /api/load_remote_json...';
+            
+            try {
+                const response = await fetch('/api/load_remote_json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        key: 'test_groups/sample.json'
+                    })
+                });
+                
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.className = response.ok ? 'success' : 'error';
+            } catch (error) {
+                resultDiv.textContent = `❌ Error: ${error.message}`;
+                resultDiv.className = 'error';
+            }
+        }
+
+        // 自动测试 /api/version
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => testAPI('/api/version'), 500);
+        });
+    </script>
+</body>
+</html>
