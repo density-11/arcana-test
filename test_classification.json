@@ -1,0 +1,377 @@
+[
+  {
+    "categoryName": "1d_wave",
+    "files": [
+      "wave2.json",
+      "wave_interference1.json"
+    ]
+  },
+  {
+    "categoryName": "2d_wave",
+    "files": [
+      "Doppler1.json",
+      "wave1.json",
+      "wave_diffraction1.json",
+      "wave_diffraction2.json",
+      "wave_diffraction3.json"
+    ]
+  },
+  {
+    "categoryName": "3d_cut",
+    "files": [
+      "cut_sushi1.json",
+      "cut_sushi2.json",
+      "cut_sushi3.json"
+    ]
+  },
+  {
+    "categoryName": "3d_move",
+    "files": [
+      "brush1.json",
+      "mop1.json",
+      "mop2.json",
+      "pipes1.json",
+      "table_and_stick_and_cuboid2.json",
+      "table_and_stick_and_cuboid1.json"
+    ]
+  },
+  {
+    "categoryName": "3d_rotate",
+    "files": [
+      "book1.json",
+      "door1.json",
+      "lid1.json",
+      "lid2.json",
+      "roll_paper1.json"
+    ]
+  },
+  {
+    "categoryName": "3d_shadow",
+    "files": [
+      "cuboid_and_shadow1.json",
+      "cuboid_and_shadow2.json",
+      "cuboid_and_shadow3.json",
+      "ring1.json",
+      "stack1.json"
+    ]
+  },
+  {
+    "categoryName": "animal",
+    "files": [
+      "cat1.json",
+      "rabbit1.json",
+      "duck1.json"
+    ]
+  },
+  {
+    "categoryName": "bottle",
+    "files": [
+      "bottle1.json",
+      "bottle2.json",
+      "bottle3.json",
+      "waterstream1.json",
+      "waterstream2.json"
+    ]
+  },
+  {
+    "categoryName": "causal_move",
+    "files": [
+      "hook1.json",
+      "jellyfish1.json",
+      "pen1.json",
+      "rocket1.json",
+      "shoot1.json",
+      "shoot2.json",
+      "toothbrush_and_toothpaste1.json",
+      "wind_and_balloon1.json",
+      "wind_and_balloon2.json",
+      "gun_revolver1.json",
+      "fish1.json"
+    ]
+  },
+  {
+    "categoryName": "causal_updown",
+    "files": [
+      "magnetic1.json",
+      "magnetic2.json",
+      "magnetic3.json",
+      "UFO_or_vacuum_cleaner1.json",
+      "sunset1.json",
+      "sunset2.json"
+    ]
+  },
+  {
+    "categoryName": "claw",
+    "files": [
+      "chopsticks1.json",
+      "claw1.json",
+      "claw2.json",
+      "claw3.json",
+      "fork1.json",
+      "fork2.json"
+    ]
+  },
+  {
+    "categoryName": "elec_clock",
+    "files": [
+      "clock4.json",
+      "clock5.json"
+    ]
+  },
+  {
+    "categoryName": "electricity",
+    "files": [
+      "car2.json",
+      "charge1.json",
+      "charge2.json",
+      "charge3.json"
+    ]
+  },
+  {
+    "categoryName": "emoji",
+    "files": [
+      "happy_and_sad1.json",
+      "smile1.json"
+    ]
+  },
+  {
+    "categoryName": "gravity_and_liquid",
+    "files": [
+      "dye1.json",
+      "dye2.json",
+      "dye3.json",
+      "dye4.json"
+    ]
+  },
+  {
+    "categoryName": "gravity_and_solid",
+    "files": [
+      "bead_chain1.json",
+      "car1.json",
+      "fall_and_dig1.json",
+      "plastic_bag1.json",
+      "portal1.json"
+    ]
+  },
+  {
+    "categoryName": "heat",
+    "files": [
+      "heat_transfer1.json",
+      "melt3.json"
+    ]
+  },
+  {
+    "categoryName": "light",
+    "files": [
+      "candle1.json",
+      "flashlight1.json",
+      "flashlight2.json",
+      "flashlight_and_stained_glass1.json",
+      "light1.json",
+      "switch1.json",
+      "switch_and_water_pipe1.json"
+    ]
+  },
+  {
+    "categoryName": "move_and_shelter",
+    "files": [
+      "basket1.json",
+      "cup_and_ball1.json",
+      "gloves1.json",
+      "hat1.json",
+      "shoes1.json",
+      "window1.json",
+      "window2.json"
+    ]
+  },
+  {
+    "categoryName": "parabola",
+    "files": [
+      "parabola1.json",
+      "plane_and_bomb1.json",
+      "portal_and_parabola1.json"
+    ]
+  },
+  {
+    "categoryName": "pendulum",
+    "files": [
+      "ballistic_pendulum1.json",
+      "bell1.json",
+      "newton_cradle1.json",
+      "newton_cradle2.json"
+    ]
+  },
+  {
+    "categoryName": "plant",
+    "files": [
+      "fireworks1.json",
+      "flower1.json",
+      "flower2.json",
+      "bomb_dropping1.json",
+      "tree1.json",
+      "tree2.json",
+      "tree_felling1.json",
+      "rain_and_umbrella1.json",
+      "stars1.json"
+    ]
+  },
+  {
+    "categoryName": "pulley",
+    "files": [
+      "pulley1.json",
+      "pulley2.json",
+      "pulley3.json"
+    ]
+  },
+  {
+    "categoryName": "reflect_and_refract",
+    "files": [
+      "reflection1.json",
+      "reflection2.json",
+      "refraction1.json",
+      "refraction2.json",
+      "refraction_and_reflection1.json"
+    ]
+  },
+  {
+    "categoryName": "rotate_and_count",
+    "files": [
+      "gear1.json",
+      "gear2.json",
+      "waterwheel1.json",
+      "waterwheel2.json",
+      "yoyo1.json",
+      "yoyo2.json",
+      "belt1.json",
+      "belt2.json",
+      "roll1.json",
+      "roll2.json",
+      "roll3.json"
+    ]
+  },
+  {
+    "categoryName": "rotate_and_rotate",
+    "files": [
+      "galaxy1.json",
+      "mechanical_arm_rotate1.json",
+      "pocket_watch1.json"
+    ]
+  },
+  {
+    "categoryName": "rotate_and_shelter",
+    "files": [
+      "disco_ball1.json",
+      "fan1.json",
+      "windmill1.json",
+      "wind_and_flag_and_windmill1.json",
+      "wind_and_flag_and_cloud1.json"
+    ]
+  },
+  {
+    "categoryName": "rotate_and_tranfsform",
+    "files": [
+      "hammer1.json",
+      "hammer2.json",
+      "telephone1.json"
+    ]
+  },
+  {
+    "categoryName": "scissors",
+    "files": [
+      "scissors1.json",
+      "scissors2.json",
+      "knife_and_cake1.json"
+    ]
+  },
+  {
+    "categoryName": "shelter_then_move",
+    "files": [
+      "cup1.json",
+      "cup2.json",
+      "drawer1.json",
+      "knife1.json",
+      "shelf1.json",
+      "toaster1.json"
+    ]
+  },
+  {
+    "categoryName": "traditional_clock",
+    "files": [
+      "clock1.json",
+      "clock2.json",
+      "clock3.json"
+    ]
+  },
+  {
+    "categoryName": "water_deeper_concept",
+    "files": [
+      "archimedes1.json",
+      "archimedes2.json",
+      "buoyancy1.json",
+      "buoyancy2.json",
+      "water_and_spoon1.json",
+      "water_and_spoon2.json",
+      "water_well1.json"
+    ]
+  },
+  {
+    "categoryName": "water_level",
+    "files": [
+      "communicating_vessels1.json",
+      "gasflow1.json",
+      "squeeze_sponge1.json",
+      "straw1.json",
+      "straw2.json",
+      "syringe1.json",
+      "tip1.json",
+      "piston1.json",
+      "waterflow1.json",
+      "waterflow2.json",
+      "water_dispenser1.json",
+      "water_dispenser2.json"
+    ]
+  },
+  {
+    "categoryName": "water_transform",
+    "files": [
+      "heat_water1.json",
+      "melt1.json",
+      "melt2.json",
+      "melt4.json",
+      "melt_and_frozen1.json",
+      "water_and_water_transformation1.json"
+    ]
+  },
+  {
+    "categoryName": "others",
+    "files": [
+      "arrow1.json",
+      "candy_crush1.json",
+      "cake_and_candle1.json",
+      "cigar1.json",
+      "domino1.json",
+      "fire_extinguisher1.json",
+      "gold_miner1.json",
+      "kaleidoscope1.json",
+      "Kepler_second_law_or_area1.json",
+      "lever1.json",
+      "lock1.json",
+      "logic_and_or_not1.json",
+      "magnetic_or_chemical_reaction1.json",
+      "matryoshka_doll1.json",
+      "moon_and_tide1.json",
+      "nuts1.json",
+      "pin-hole_imaging1.json",
+      "golf1.json",
+      "puzzle_bubble1.json",
+      "rainbow_spring1.json",
+      "rust1.json",
+      "sandglass1.json",
+      "snake1.json",
+      "tetris1.json",
+      "vine1.json",
+      "water_and_trench1.json",
+      "zuma1.json"
+    ]
+  }
+]
