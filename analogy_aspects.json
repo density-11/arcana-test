@@ -1,0 +1,26 @@
+{
+  "color": {
+    "enabled": true,
+    "stage": "analogy_color",
+    "composite_label": "color",
+    "prompt_tail": "Please mainly consider the color of the patterns in the examples, use one word or one sentence to describe what the picture looks like in real world, in other words, what can be the picture analogous in real world, and give me your reason."
+  },
+  "shape": {
+    "enabled": true,
+    "stage": "analogy_shape",
+    "composite_label": "shape",
+    "prompt_tail": "Please mainly consider the shape of the patterns in the examples, use one word or one sentence to describe what the picture looks like in real world, in other words, what can be the picture analogous in real world, and give me your reason."
+  },
+  "dynamic": {
+    "enabled": true,
+    "stage": "analogy_dynamic",
+    "composite_label": "dynamic change",
+    "prompt_tail": "Please mainly consider the dynamic change of the patterns in the examples, use one word or one sentence to describe what the rule of the question looks like in real world, in other words, what can be the picture analogous in real world, and give me your reason."
+  },
+  "full": {
+    "enabled": true,
+    "stage": "analogy_full",
+    "composite_label": "full image",
+    "prompt_tail": "Please consider the full image of the patterns in the examples, use one word or one sentence to describe what the rule of the question looks like in real world, in other words, what can be the picture analogous in real world, and give me your reason."
+  }
+}

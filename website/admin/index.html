@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARCANA 本地实验管理</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --blue: #2196f3;
+            --green: #2e7d32;
+            --orange: #ef6c00;
+            --red: #c62828;
+            --ink: #1f2937;
+            --muted: #64748b;
+            --line: #dbe2ea;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 32px; background: #f4f7fb; color: var(--ink); font-family: Arial, "Microsoft YaHei", sans-serif; }
+        .container { max-width: 1500px; margin: 0 auto; background: white; padding: 28px; border-radius: 12px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); }
+        header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; }
+        h1 { margin: 0; color: var(--blue); font-size: 28px; }
+        h2, h3 { margin-top: 0; }
+        .notice { margin: 18px 0 26px; padding: 14px 16px; border-left: 4px solid var(--blue); border-radius: 6px; background: #eaf5ff; line-height: 1.55; }
+        .notice.warning { border-color: #f59e0b; background: #fff8e1; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 14px; margin-bottom: 28px; }
+        .stat-card { padding: 18px; border-radius: 10px; color: white; text-align: center; background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-card.green { background: linear-gradient(135deg, #43a047, #1b5e20); }
+        .stat-card.orange { background: linear-gradient(135deg, #ff9800, #ef6c00); }
+        .stat-card.red { background: linear-gradient(135deg, #e53935, #b71c1c); }
+        .stat-number { font-size: 27px; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 13px; opacity: 0.95; }
+        .panel { margin: 24px 0; padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+        .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        input { min-width: 260px; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        button, .link-button { padding: 10px 16px; border: 0; border-radius: 6px; color: white; background: var(--blue); font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
+        button:hover, .link-button:hover { filter: brightness(0.94); }
+        button:disabled { opacity: 0.55; cursor: wait; }
+        .btn-green { background: #2e7d32; }
+        .btn-gray { background: #546e7a; }
+        .btn-small { padding: 6px 9px; margin: 2px; font-size: 12px; }
+        .generated { display: none; margin-top: 16px; padding: 16px; border: 1px solid #a5d6a7; border-radius: 8px; background: #e8f5e9; }
+        .url-display { margin: 8px 0; padding: 10px; border: 1px solid var(--line); border-radius: 5px; background: white; font-family: monospace; overflow-wrap: anywhere; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; min-width: 1120px; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
+        th { background: #f1f5f9; white-space: nowrap; }
+        tbody tr:nth-child(even) { background: #f8fafc; }
+        .status { display: inline-block; padding: 4px 7px; border-radius: 4px; font-weight: 700; white-space: nowrap; }
+        .status-assigned { color: #075985; background: #e0f2fe; }
+        .status-completed { color: #166534; background: #dcfce7; }
+        .status-failed { color: #991b1b; background: #fee2e2; }
+        .status-timeout { color: #9a3412; background: #ffedd5; }
+        .muted { color: var(--muted); }
+        .error { padding: 14px; color: #991b1b; background: #fee2e2; border-radius: 6px; }
+        .empty { padding: 30px; text-align: center; color: var(--muted); }
+        .pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 18px; }
+        .pagination button { color: #075985; background: #e0f2fe; }
+        .pagination button.current { color: white; background: var(--blue); }
+        .group-usage { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .group-chip { padding: 7px 10px; border-radius: 999px; background: #eef2ff; color: #3730a3; font-size: 13px; }
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .container { padding: 18px; }
+            header { align-items: flex-start; flex-direction: column; }
+            input { min-width: 100%; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <header>
+            <div>
+                <h1>🧠 ARCANA 本地实验管理</h1>
+                <div class="muted">Local Admin Dashboard</div>
+            </div>
+            <a class="link-button btn-gray" href="/">返回参与者入口</a>
+        </header>
+
+        <div class="notice">
+            此页面读取当前服务器的 <code>local_data/</code>。Admin 页面及其接口仅允许从本机回环地址访问，不使用原云端账号或数据。
+        </div>
+
+        <section id="statsContainer" class="stats">
+            <div class="muted">正在加载统计数据……</div>
+        </section>
+
+        <section class="panel">
+            <h3>🔗 创建或查找本地分配</h3>
+            <div class="toolbar">
+                <input type="text" id="participantId" maxlength="256" placeholder="输入 participant ID（必填）">
+                <button id="generateButton" type="button">生成/查找测试链接</button>
+                <button class="btn-green" type="button" onclick="exportResults()">下载全部结果</button>
+                <button class="btn-gray" type="button" onclick="refreshData(this)">刷新数据</button>
+            </div>
+            <div id="newUrlResult" class="generated">
+                <strong>✅ 分配已准备好</strong>
+                <div>测试组：<span id="assignedGroup"></span></div>
+                <div>参与者：<span id="assignedParticipant"></span></div>
+                <div id="generatedUrl" class="url-display"></div>
+                <button class="btn-green" type="button" onclick="copyGeneratedUrl()">复制链接</button>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h3>📊 题组累计分配次数</h3>
+            <div class="muted">本地题组允许重复分配，因此不存在“只剩几个题组”的容量限制。</div>
+            <div id="groupUsage" class="group-usage"></div>
+        </section>
+
+        <section class="panel">
+            <h3>📋 所有本地分配记录</h3>
+            <div id="assignmentsContainer" class="muted">正在加载分配记录……</div>
+        </section>
+
+        <div class="notice warning">
+            本地 Admin 不提供重置、删除、清理、解锁或重新分配操作。提交结果、当前进度和全部结果可以下载为 JSON；如需开始独立演示，请改用新的 <code>--data-dir</code>。
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = '/api';
+        let currentPage = 1;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('generateButton').addEventListener('click', generateUrl);
+            document.getElementById('participantId').addEventListener('keydown', event => {
+                if (event.key === 'Enter') generateUrl();
+            });
+            refreshData();
+        });
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            })[character]);
+        }
+
+        async function fetchJson(url, options = {}) {
+            const response = await fetch(url, options);
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                throw new Error(data.message || data.error || `HTTP ${response.status}`);
+            }
+            return data;
+        }
+
+        function buildTestUrl(assignment) {
+            const params = new URLSearchParams({
+                session_id: assignment.session_id,
+                participant_id: assignment.participant_id || '',
+                assigned_group: assignment.test_group || '',
+                assignment_fingerprint: assignment.fingerprint || assignment.assignment_fingerprint || ''
+            });
+            return `${window.location.origin}/app?${params.toString()}`;
+        }
+
+        function statCard(number, label, colorClass = '') {
+            return `<div class="stat-card ${colorClass}"><div class="stat-number">${escapeHtml(number)}</div><div class="stat-label">${escapeHtml(label)}</div></div>`;
+        }
+
+        async function loadStats() {
+            const stats = await fetchJson(`${API_BASE}/admin/stats`);
+            document.getElementById('statsContainer').innerHTML = [
+                statCard(stats.total_groups || 0, '可复用测试组'),
+                statCard(stats.total_assigned || 0, '累计分配'),
+                statCard(stats.in_progress || 0, '进行中'),
+                statCard(stats.saved_progress || 0, '已保存进度'),
+                statCard(stats.total_completed || 0, '已完成', 'green'),
+                statCard(stats.result_files || 0, '结果文件', 'green'),
+                statCard(stats.attention_check_failed || 0, 'Attention Check 失败', 'orange'),
+                statCard(stats.timeout_locked || 0, '120 小时超时', 'red'),
+                statCard(stats.completion_rate || '0.0%', '完成率')
+            ].join('');
+
+            const usage = stats.group_usage || {};
+            document.getElementById('groupUsage').innerHTML = Object.entries(usage)
+                .map(([name, count]) => `<span class="group-chip">${escapeHtml(name)}：${escapeHtml(count)}</span>`)
+                .join('') || '<span class="muted">没有可用题组。</span>';
+        }
+
+        function statusMarkup(status) {
+            if (status === 'completed') return '<span class="status status-completed">✅ 已完成</span>';
+            if (status === 'attention_check_failed') return '<span class="status status-failed">⚠️ AC 失败</span>';
+            if (status === 'timeout' || status === 'timeout_locked') return '<span class="status status-timeout">🕐 120h 超时</span>';
+            return '<span class="status status-assigned">⏳ 进行中</span>';
+        }
+
+        function formatTime(value) {
+            if (!value) return '-';
+            const parsed = new Date(value);
+            return Number.isNaN(parsed.getTime()) ? String(value) : parsed.toLocaleString();
+        }
+
+        function accuracyMarkup(assignment) {
+            if (assignment.accuracy) return `<strong>${escapeHtml(assignment.accuracy)}</strong>`;
+            if (assignment.correct_answer != null && assignment.total_questions != null) {
+                const total = Number(assignment.total_questions);
+                const correct = Number(assignment.correct_answer);
+                const percentage = total > 0 ? `${(correct / total * 100).toFixed(1)}%` : 'N/A';
+                return `<strong>${escapeHtml(percentage)}</strong> (${escapeHtml(correct)}/${escapeHtml(total)})`;
+            }
+            return '-';
+        }
+
+        function actionMarkup(assignment) {
+            const testUrl = buildTestUrl(assignment);
+            let html = `<button class="btn-small btn-gray" type="button" data-copy-url="${escapeHtml(testUrl)}">复制链接</button>`;
+            if (assignment.has_saved_progress) {
+                html += `<button class="btn-small" type="button" data-progress-session="${escapeHtml(assignment.session_id)}">下载进度</button>`;
+            }
+            if (assignment.result_available) {
+                html += `<button class="btn-small btn-green" type="button" data-result-session="${escapeHtml(assignment.session_id)}">下载结果</button>`;
+            }
+            return html;
+        }
+
+        async function loadAssignments(page = 1) {
+            currentPage = page;
+            const data = await fetchJson(`${API_BASE}/admin/assignments?page=${page}&per_page=20`);
+            const pagination = data.pagination;
+            if (!data.assignments.length) {
+                document.getElementById('assignmentsContainer').innerHTML = '<div class="empty">还没有本地分配记录。</div>';
+                return;
+            }
+
+            const first = (pagination.page - 1) * pagination.per_page + 1;
+            const last = Math.min(pagination.page * pagination.per_page, pagination.total);
+            let html = `<div class="muted" style="margin-bottom:12px">显示 ${first}–${last}，共 ${pagination.total} 条</div>`;
+            html += `<div class="table-wrap"><table><thead><tr>
+                <th>Session ID</th><th>测试组</th><th>Participant ID</th><th>分配时间</th>
+                <th>状态</th><th>保存进度</th><th>正确率</th><th>状态时间</th><th>操作</th>
+            </tr></thead><tbody>`;
+
+            for (const assignment of data.assignments) {
+                const statusTime = assignment.completed_at || assignment.failed_at || assignment.timeout_at;
+                const progress = assignment.has_saved_progress
+                    ? `第 ${escapeHtml(assignment.current_problem || '?')} 题<br><span class="muted">${escapeHtml(formatTime(assignment.last_saved_at))}</span>`
+                    : '-';
+                html += `<tr>
+                    <td title="${escapeHtml(assignment.session_id)}"><code>${escapeHtml(assignment.session_id)}</code></td>
+                    <td>${escapeHtml(assignment.test_group || 'N/A')}</td>
+                    <td>${escapeHtml(assignment.participant_id || '未指定')}</td>
+                    <td>${escapeHtml(formatTime(assignment.created_at))}</td>
+                    <td>${statusMarkup(assignment.status)}</td>
+                    <td>${progress}</td>
+                    <td>${accuracyMarkup(assignment)}</td>
+                    <td>${escapeHtml(formatTime(statusTime))}</td>
+                    <td>${actionMarkup(assignment)}</td>
+                </tr>`;
+            }
+            html += '</tbody></table></div>';
+
+            if (pagination.total_pages > 1) {
+                html += '<div class="pagination">';
+                for (let pageNumber = 1; pageNumber <= pagination.total_pages; pageNumber += 1) {
+                    const current = pageNumber === pagination.page ? ' current' : '';
+                    html += `<button class="${current}" type="button" data-page="${pageNumber}">${pageNumber}</button>`;
+                }
+                html += '</div>';
+            }
+
+            const container = document.getElementById('assignmentsContainer');
+            container.innerHTML = html;
+            container.querySelectorAll('[data-page]').forEach(button => {
+                button.addEventListener('click', () => loadAssignments(Number(button.dataset.page)));
+            });
+            container.querySelectorAll('[data-copy-url]').forEach(button => {
+                button.addEventListener('click', () => copyText(button.dataset.copyUrl));
+            });
+            container.querySelectorAll('[data-progress-session]').forEach(button => {
+                button.addEventListener('click', () => downloadJson(`${API_BASE}/admin/progress/${encodeURIComponent(button.dataset.progressSession)}`, `arc_progress_${button.dataset.progressSession}.json`));
+            });
+            container.querySelectorAll('[data-result-session]').forEach(button => {
+                button.addEventListener('click', () => downloadJson(`${API_BASE}/admin/download/${encodeURIComponent(button.dataset.resultSession)}`, `arc_result_${button.dataset.resultSession}.json`));
+            });
+        }
+
+        async function refreshData(button = null) {
+            const originalText = button ? button.textContent : '';
+            if (button) {
+                button.disabled = true;
+                button.textContent = '刷新中……';
+            }
+            try {
+                await Promise.all([loadStats(), loadAssignments(currentPage)]);
+            } catch (error) {
+                document.getElementById('assignmentsContainer').innerHTML = `<div class="error">加载失败：${escapeHtml(error.message)}</div>`;
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                }
+            }
+        }
+
+        async function generateUrl() {
+            const input = document.getElementById('participantId');
+            const participantId = input.value.trim();
+            if (!participantId) {
+                alert('请输入 participant ID。');
+                input.focus();
+                return;
+            }
+            const button = document.getElementById('generateButton');
+            button.disabled = true;
+            try {
+                const result = await fetchJson(`${API_BASE}/assign_url`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participant_id: participantId })
+                });
+                const assignment = {
+                    session_id: result.session_id,
+                    participant_id: participantId,
+                    test_group: result.test_group,
+                    assignment_fingerprint: result.assignment_fingerprint
+                };
+                document.getElementById('assignedGroup').textContent = result.test_group;
+                document.getElementById('assignedParticipant').textContent = participantId;
+                document.getElementById('generatedUrl').textContent = buildTestUrl(assignment);
+                document.getElementById('newUrlResult').style.display = 'block';
+                input.value = '';
+                await refreshData();
+            } catch (error) {
+                alert(`分配失败：${error.message}`);
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function copyText(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (_) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                textarea.remove();
+            }
+            alert('✅ 链接已复制。');
+        }
+
+        function copyGeneratedUrl() {
+            copyText(document.getElementById('generatedUrl').textContent);
+        }
+
+        async function downloadJson(url, fallbackFilename) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.message || error.error || `HTTP ${response.status}`);
+                }
+                const blob = await response.blob();
+                const match = (response.headers.get('Content-Disposition') || '').match(/filename="([^"]+)"/);
+                const objectUrl = URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.href = objectUrl;
+                anchor.download = match ? match[1] : fallbackFilename;
+                document.body.appendChild(anchor);
+                anchor.click();
+                anchor.remove();
+                URL.revokeObjectURL(objectUrl);
+            } catch (error) {
+                alert(`下载失败：${error.message}`);
+            }
+        }
+
+        function exportResults() {
+            downloadJson(`${API_BASE}/admin/export`, 'arc_export.json');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+# Python and editor caches
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+
+# Local credentials and environment files
+.env
+.env.*
+!.env.example
+
+# Logs and raw model responses
+*.log
+*.jsonl
+
+# Runtime baseline and pipeline outputs
+baseline/
+baseline_code/
+pipeline/
+pipeline_experiments/
+pipeline_beforeexpansion/
+programs/
+results/
+logs/
+ALL_RESULTS*/
+
+# Generated evaluation summaries
+baseline_cost_*.csv
+baseline_cost_*.json
+baseline_cost_*.png
+batch_baseline_answer_dict*.json
+to_be_test.json
+untested_files.json
+untested_model.txt
+one_chance_answers.json
+
+# Generated visualization outputs
+data_visualization*/
+arcana_pic/
+gpt5_one_chance/
+processed_data/
+LLMdata/
+LLMdata_vis/
+pic_representation/
+onlypic/
+
+# Local website state
+website/local_data/
+
+# Local archives and bulky working files
+*.pptx
+*.pdf
+*.tar
+*.gz
+*.zip

@@ -1,5 +1,5 @@
 {
-  "examples": [
+  "train": [
     {
       "input": [
         [
@@ -3103,7 +3103,7 @@
           2
         ]
       ],
-      "answer": [
+      "output": [
         [
           2,
           2,

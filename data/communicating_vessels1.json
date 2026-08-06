@@ -1,5 +1,5 @@
 {
-  "examples": [
+  "train": [
     {
       "input": [
         [
@@ -1808,7 +1808,7 @@
           9
         ]
       ],
-      "answer": [
+      "output": [
         [
           0,
           0,
